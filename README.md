@@ -5,7 +5,7 @@ Uni of York CS 2003 CGV Assessment Solution
 ![Screenshot](boatlake_screen01.png "Screenshot")
 
 
-## About
+## about
 This project is the result of my work for open assessment of Computer Graphics course (CGV) at the University of York in the year 2002 (my second year). The goal was to build a boat on the lake that should have been 'playable' (i.e. movable).
 
 As the boat moves it leaves two trails of 'bubbles' - one for each engine. Simple array-based particle system was used. 
