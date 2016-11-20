@@ -1,0 +1,6 @@
+to compile on Mac OS X just type "make" in the Terminal; and run it with "./boat" then!
+
+for other Unix or Linux Makefile needs to be modified. I dont currently use other Unices so you have to do it yourself: add include/libs options for gl, glu and glut libraries that are found on your system.
+
+similarly on windows you can use cygwin with a Makefile or VS/VC++.
+
