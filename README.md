@@ -1,6 +1,10 @@
 # BoatLakeCgv
 Uni of York CS 2003 CGV Assessment Solution
 
+
+![Screenshot](boatlake_screen01.png "Screenshot")
+
+
 ## About
 This project is the result of my work for open assessment of Computer Graphics course (CGV) at the University of York in the year 2002 (my second year). The goal was to build a boat on the lake that should have been 'playable' (i.e. movable).
 
@@ -9,6 +13,8 @@ As the boat moves it leaves two trails of 'bubbles' - one for each engine. Simpl
 As far as I recall the requirements, behind the lake, there should be green hills and behind them - brown mountains (mine are slightly reddish - I like it so :)). I have used Perlin noise to create the landscape. 
 
 There were extra points for the boat shape, so I decided to use Bezier patches for that. I have created patch editor so one can modify boat shape 'in-game'. Boat views and editor can be accessed using alternative-click activated menu.
+
+The motivation to put this on GitHub came when I found as similar [project](https://github.com/hollobon/miraclegrow) from another prior student for a different CGV course year.
 
 ## how to build
 * get(/build) *premake5* and *Glut* (or perhaps *freeglut*)
