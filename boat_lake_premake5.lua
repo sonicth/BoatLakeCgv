@@ -10,6 +10,8 @@ if os.get() == "windows" then
 	GLUT_INC_DIR = "K:/frameworks/src/freeglut-3.0.0/include"
 	GLUT_LIB_DIR = "K:/frameworks/build/freeglut-3.0.0-build/lib"
 else
+	GLUT_INC_DIR = ""
+	GLUT_LIB_DIR = ""
 end
 
 solution "BoatLake"
@@ -25,7 +27,11 @@ solution "BoatLake"
 
 	includedirs { GLUT_INC_DIR }
 	
-	links { "freeglutd" }
+if os.get() == "windows" then
+	links { "freeglut" }
+else
+	linkoptions { "-framework GLUT", "-framework OpenGL" }
+end
 		
 	debugdir "$(TargetDir)"
 	
@@ -46,6 +52,6 @@ solution "BoatLake"
 		kind "ConsoleApp"
 		files { "src/*",
 			}
-		excludes { "src/Makefile" }
+		excludes { "src/Makefile", "src/*.o", "src/.*" }
 		
 
