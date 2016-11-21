@@ -15,8 +15,8 @@ GLvoid change_view_to_side(GLvoid);
 GLvoid change_view_to_mobile(GLvoid);
 GLvoid change_view_to_plan(GLvoid);
 GLvoid idle(GLvoid);
-GLvoid moveBoat(GLint);
-GLvoid rotateBoat(GLint);
+GLvoid moveBoat(float, float);
+GLvoid rotateBoat(float);
 int collisionTest(float, float);	/* function tests for collision and returns */
 float boatAreaTest(float, float);
 extern int verbose;
@@ -30,7 +30,7 @@ extern GLvoid drawBoatScreen(GLvoid);
 extern int shade_mode;
 extern GLvoid lights(GLvoid);
 extern GLfloat mod(GLfloat);
-extern GLvoid moveParticle(int);
+extern GLvoid moveParticle(int is_moving, int);
 extern GLvoid createParticleList(GLvoid);
 extern GLvoid moveBezierPoints(int, int);
 extern GLvoid printBoatData();
@@ -39,8 +39,8 @@ extern double sqr(double);			/* simple square function, helps in long arrays */
 extern GLvoid createBoatList(GLvoid);
 									/* Here we will put variables which we wish to be global */
 GLint window;						/* The number and then size of our GLUT window */
-GLint Xsize = 500;
-GLint Ysize = 500;
+const GLint window_width = 1027;
+const GLint window_height = 768;
 GLint look_flag = VIEW_BOAT_FRONT;	/* the mode of view */
 									/* camera viewing options
 										free few and boat view */
@@ -259,32 +259,44 @@ GLvoid processMouse(int button, int state, int x, int y)
 										been done
 									*/
 
-
+static int prev_time = 0;
 GLvoid idle(GLvoid)
 									/*	idle function
 										called either by timer
 										or by glut idle call
 									*/
 {
-	if (boat_rotate_delta)	{	rotateBoat(boat_rotate_delta);	}
-	if (boat_move_delta)	{	moveBoat(boat_move_delta);		}
+	const int SLEEP_MSECONDS = 100;
+	int et =  glutGet(GLUT_ELAPSED_TIME);
+	int delta_time = et - prev_time;
+	prev_time = et;
+
+	// boat movement
+	if (boat_rotate_delta)	{	rotateBoat(boat_rotate_delta * delta_time);	}
+	if (boat_move_delta)	{	moveBoat(boat_angle, boat_move_delta * delta_time);		}
 	
-	if (boat_rotate_delta || boat_move_delta)
-	{
-		moveParticle(1);
-	} else {
-		moveParticle(0);
-	}
+	// particle movement, even when idle!
+	moveParticle(boat_rotate_delta || boat_move_delta, delta_time);
+
 	/*	
 		if boat doesnt move or rotate, particles are just killed
 	*/
 	glutPostRedisplay();
+
+#ifdef WIN32
+	// sleep for a little bit
+	Sleep(SLEEP_MSECONDS);
+#else
+	usleep(SLEEP_MSECONDS * 1000);
+#endif
 }
 
-GLvoid moveBoat(GLint dir)
+GLvoid moveBoat(float boat_angle, float move_delta)
 {
-	float xinc = BOAT_SPEED * sin(boat_angle*PI/180) * dir;
-	float zinc = BOAT_SPEED * cos(boat_angle*PI/180) * dir;
+	float angle_pos = boat_angle*(float)PI / 180;
+	float move_amount = BOAT_SPEED * move_delta;
+	float xinc = move_amount * sin(angle_pos);
+	float zinc = move_amount * cos(angle_pos);
 									/*	increment of boat
 										boat_angle represents the direction of boat								
 									*/
@@ -299,9 +311,9 @@ GLvoid moveBoat(GLint dir)
 	}
 }
 
-GLvoid rotateBoat(GLint angle)
+GLvoid rotateBoat(float angle_delta)
 {
-	boat_angle += boat_rotate_delta * BOAT_ROTATE_SPEED;
+	boat_angle += angle_delta * BOAT_ROTATE_SPEED;
 }
 
 int collisionTest(float x, float z)
@@ -618,7 +630,7 @@ int main(int argc, char **argv)
                       GLUT_DOUBLE |    /* Single buffer */
                       GLUT_DEPTH);     /* Z buffer (depth) */
 
-  glutInitWindowSize(Xsize, Ysize);         /* set initial window size. */
+  glutInitWindowSize(window_width, window_height);         /* set initial window size. */
   glutInitWindowPosition(100, 100);         /* upper left corner of the screen. */
 
   window = glutCreateWindow("L0");     /* Open a window with a title. */ 

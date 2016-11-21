@@ -27,9 +27,7 @@ solution "BoatLake"
 
 	includedirs { GLUT_INC_DIR }
 	
-if os.get() == "windows" then
-	links { "freeglut" }
-else
+if os.get() == "macosx" then
 	linkoptions { "-framework GLUT", "-framework OpenGL" }
 end
 		

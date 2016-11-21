@@ -69,9 +69,10 @@ and strip count along the width of landscape
 #endif
 //BOAT DIMENSIONS!
 #define BOAT_SIZE_LENGTH	10
-#define BOAT_SPEED			1.2
-#define BOAT_ROTATE_SPEED	5.0
-#define BOAT_OFFSET			5.0
+#define BOAT_SPEED			0.03f
+#define BOAT_ROTATE_SPEED	0.2f
+#define BOAT_OFFSET			5.0f
+#define PARTICLE_SPEED		0.01f
 //PARTICLES
 #define	MAX_PARTICLES		50
 //CAMERA ZOOM for mobile view

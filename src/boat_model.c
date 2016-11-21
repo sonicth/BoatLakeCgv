@@ -19,8 +19,8 @@ void createBoatScreenList(void);
 void generateBoat(void);
 extern float mod(float);
 extern double drand48(void);
-void moveParticle(int);
-void newParticle(int);
+void moveParticle(int is_moving, int);
+void newParticle(int, float);
 void moveBezierPoints(int, int);
 void printBoatData();
 void initBoatArray(void);
@@ -521,7 +521,7 @@ void drawParticles(void)
 				{
 					glColor4f(0.9, 0.9, 1.0, particles[i][3] / (float) MAX_PARTICLES);
 				}
-				glTranslatef(0.0, (sin(particles[i][3]--) + drand48())/10.0, 0.0);
+				glTranslatef(0.0, sin(particles[i][3])/10.0, 0.0);
 				glCallList(part_list);
 			}
 		glPopMatrix();
@@ -541,16 +541,17 @@ void drawParticles(void)
 
 
 
-void newParticle(int move)
+void newParticle(int is_moving, float move_speed)
 {
-	//offset for the motor, or the distance between particle lines
-	double motor_offset = ((drand48() > 0.5) ? 1.0 : -1.0) + drand48() - 0.5;
-	if (move)
-
+	if (is_moving)
    //translation to the back of either of boat rails, plus timestamp
 	{
+		//offset for the motor, or the distance between particle lines
+		double motor_offset = ((drand48() > 0.5) ? 1.0 : -1.0) + drand48() - 0.5;
+		
+
 		particles[particles_count][0] = (GLfloat) boatX - cos(boat_angle*PI/180) * (motor_offset) - ( BOAT_OFFSET + 1.0) * sin(boat_angle*PI/180);
-		particles[particles_count][1] = drand48() / 2.0 - 0.25;
+		particles[particles_count][1] = move_speed * drand48() / 2.0 - 0.25;
 		particles[particles_count][2] = (GLfloat) boatZ + sin(boat_angle*PI/180) * (motor_offset) - ( BOAT_OFFSET + 1.0) * cos(boat_angle*PI/180);
 		particles[particles_count][3] = MAX_PARTICLES;		//save angle too.
 	} else {
@@ -563,13 +564,36 @@ void newParticle(int move)
 		particles[particles_count][3] = 0.0;
 	}
 	//printf("new particle created at %f, %f, %f\n", particles[particles_count][0], particles[particles_count][1], particles[particles_count][2]);
+
 }
 
-void moveParticle(int move)
+void moveParticle(int is_moving, int move_delta)
 {
-	newParticle(move);
-	//circular cueue for particles
-	particles_count = ++particles_count % MAX_PARTICLES;
+	int i;
+	
+	// determine if we need to move the particles!
+	static int move_sum = 0;
+	move_sum += move_delta;
+	const float PARTICLE_MOVE_STEP = 10;
+
+	if (move_sum > PARTICLE_MOVE_STEP)
+	{
+		float move_speed = move_delta * PARTICLE_SPEED;
+
+		newParticle(is_moving, move_speed);
+		move_sum -= PARTICLE_MOVE_STEP;
+
+		//circular cueue for particles
+		particles_count = (1 + particles_count) % MAX_PARTICLES;
+
+		// advance all particles
+		for (i = 0; i < MAX_PARTICLES; i++)
+		{
+			particles[i][1] += move_speed * (drand48() - 0.5);
+		}
+	}
+
+	
 }
 //////////
 //mini bezier constructor
