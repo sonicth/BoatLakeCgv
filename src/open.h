@@ -72,7 +72,7 @@ and strip count along the width of landscape
 #define BOAT_SPEED			0.03f
 #define BOAT_ROTATE_SPEED	0.2f
 #define BOAT_OFFSET			5.0f
-#define PARTICLE_SPEED		0.01f
+#define PARTICLE_SPEED		0.2f
 //PARTICLES
 #define	MAX_PARTICLES		50
 //CAMERA ZOOM for mobile view

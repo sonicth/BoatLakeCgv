@@ -567,29 +567,40 @@ void newParticle(int is_moving, float move_speed)
 
 }
 
-void moveParticle(int is_moving, int move_delta)
+void moveParticle(int is_moving, int time_delta)
 {
+	const int PARTICLE_TIME_SHARE = 15;
 	int i;
 	
-	// determine if we need to move the particles!
-	static int move_sum = 0;
-	move_sum += move_delta;
-	const float PARTICLE_MOVE_STEP = 10;
+	// the time to spend for particle processing
+	//	NOTE depending on time_delta, multiple or no particles may be processed
+	static int time_to_move = 0;
+	time_to_move += time_delta;
 
-	if (move_sum > PARTICLE_MOVE_STEP)
+
+	//	TODO  empty time_to_move
+	//		a) delta is less than timeshare --> wait until timeshare for particle handling is accumulated
+	//		b) delta is greater (could be much greater!) than timeshare --> handle repeatedly untill elapsed time es exhausted
+	//				possible spawning multiple times
+	for (;time_to_move >= PARTICLE_TIME_SHARE; time_to_move -= PARTICLE_TIME_SHARE)
 	{
-		float move_speed = move_delta * PARTICLE_SPEED;
-
+		float move_speed = PARTICLE_SPEED;
+		printf("move_delta %d\n", time_delta);
 		newParticle(is_moving, move_speed);
-		move_sum -= PARTICLE_MOVE_STEP;
+
 
 		//circular cueue for particles
 		particles_count = (1 + particles_count) % MAX_PARTICLES;
 
 		// advance all particles
+
 		for (i = 0; i < MAX_PARTICLES; i++)
 		{
-			particles[i][1] += move_speed * (drand48() - 0.5);
+			// move active particles!
+			if (particles[i][1])
+			{
+				particles[i][1] += move_speed * (drand48() - 0.5);
+			}
 		}
 	}
 

@@ -266,7 +266,7 @@ GLvoid idle(GLvoid)
 										or by glut idle call
 									*/
 {
-	const int SLEEP_MSECONDS = 100;
+	const int SLEEP_MSECONDS = 10;
 	int et =  glutGet(GLUT_ELAPSED_TIME);
 	int delta_time = et - prev_time;
 	prev_time = et;
